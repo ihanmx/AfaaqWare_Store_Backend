@@ -50,4 +50,6 @@ router.post(
   resetPassword,
 );
 
+router.post("/refresh", refreshLimiter, refresh);
+
 module.exports = router;

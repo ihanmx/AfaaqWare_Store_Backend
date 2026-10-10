@@ -24,4 +24,14 @@ const loginLimiter = makeLimiter({
   message: "Too many login attempts, try again later",
 });
 
-module.exports = { forgotPasswordLimiter, verifyOtpLimiter, loginLimiter };
+const refreshLimiter = makeLimiter({
+  limit: 60,
+  message: "Too many refresh attempts, try again later",
+});
+
+module.exports = {
+  forgotPasswordLimiter,
+  verifyOtpLimiter,
+  loginLimiter,
+  refreshLimiter,
+};

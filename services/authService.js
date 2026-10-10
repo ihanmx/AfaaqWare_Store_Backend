@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const ApiError = require("../utils/ApiError");
 const User = require("../models/userModels");
-const { issueTokens } = require("../utils/tokenService");
+const { issueTokens, verifyRefreshToken } = require("../utils/tokenService");
 const crypto = require("crypto");
 const { generateOtp, generateResetToken, hash } = require("../utils/otp");
 const emailService = require("./emailService");
@@ -161,6 +161,42 @@ const resetPassword = async ({ resetToken, password }) => {
   return { user: publicUser(user), ...issueTokens(user) };
 };
 
+// @desc Exchange a valid refresh cookie for a fresh token pair
+// @route POST /api/v1/auth/refresh
+// @access Public (the cookie IS the credential)
+const refresh = async (refreshToken) => {
+  if (!refreshToken) {
+    throw ApiError.unauthorized("Not logged in");
+  }
+
+  let payload;
+
+  try {
+    payload = verifyRefreshToken(refreshToken);
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      throw ApiError.unauthorized("Session expired, please log in again");
+    }
+    throw ApiError.unauthorized("Invalid session");
+  }
+
+  const user = await User.findById(payload.id);
+  if (!user) {
+    throw ApiError.unauthorized("This account no longer exists");
+  }
+
+  if (user.passwordChangedAt) {
+    const changedAtSec = Math.floor(user.passwordChangedAt.getTime() / 1000);
+    if (payload.iat < changedAtSec) {
+      throw ApiError.unauthorized(
+        "Password was changed recently, please log in again",
+      );
+    }
+  }
+
+  return { user: publicUser(user), ...issueTokens(user) };
+};
+
 module.exports = {
   register,
   login,
@@ -168,4 +204,5 @@ module.exports = {
   forgotPassword,
   verifyResetOtp,
   resetPassword,
+  refresh,
 };
