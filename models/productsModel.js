@@ -1,6 +1,8 @@
 // create schema
 const mongoose = require("mongoose");
-
+const imageSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+});
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -10,6 +12,7 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Category",
     },
+    images: { type: [imageSchema], default: [] },
   },
   { timestamps: true },
 );

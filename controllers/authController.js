@@ -70,6 +70,20 @@ const resetPassword = async (req, res) => {
   res.status(200).json({ message: "Password reset", user, accessToken });
 };
 
+// @desc Refresh the session
+// @route POST /api/v1/auth/refresh
+// @access Public
+const refresh = async (req, res) => {
+  // Input comes from the cookie, not the body - that is the whole point of
+  // httpOnly: the client never handles this value.
+  const { user, accessToken, refreshToken } = await authService.refresh(
+    req.cookies.jwt,
+  );
+
+  res.cookie("jwt", refreshToken, cookieOptions);
+  res.status(200).json({ message: "Session refreshed", user, accessToken });
+};
+
 module.exports = {
   register,
   login,

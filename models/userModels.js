@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    avatar: { type: String, default: null },
     passwordChangedAt: Date,
     passwordResetOtp: { type: String, select: false },
     passwordResetToken: { type: String, select: false },
