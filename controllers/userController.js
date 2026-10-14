@@ -7,7 +7,9 @@ const { publicUser } = require("../services/authService");
 // @access Admin
 const createUser = async (req, res) => {
   const user = await userService.createUser(req.validated.body);
-  res.status(201).json({ message: "User created successfully", user: publicUser(user) });
+  res
+    .status(201)
+    .json({ message: "User created successfully", user: publicUser(user) });
 };
 
 // @desc Get all users
@@ -46,7 +48,9 @@ const updateUser = async (req, res) => {
     req.validated.params.id,
     req.validated.body,
   );
-  res.status(200).json({ message: "User updated successfully", user: publicUser(user) });
+  res
+    .status(200)
+    .json({ message: "User updated successfully", user: publicUser(user) });
 };
 
 // @desc Delete a user
@@ -55,6 +59,18 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   await userService.deleteUser(req.validated.params.id);
   res.status(200).json({ message: "User deleted successfully" });
+};
+
+// @route PATCH /api/v1/users/me/avatar
+const updateMyAvatar = async (req, res) => {
+  const user = await userService.updateAvatar(req.user.id, req.file); // singular
+  res.status(200).json({ message: "Avatar updated", user: publicUser(user) });
+};
+
+// @route DELETE /api/v1/users/me/avatar
+const removeMyAvatar = async (req, res) => {
+  const user = await userService.removeAvatar(req.user.id);
+  res.status(200).json({ message: "Avatar removed", user: publicUser(user) });
 };
 
 module.exports = {

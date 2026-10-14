@@ -7,7 +7,7 @@ const createProductSchema = z.strictObject({
   stock: z.number().int("Stock must be a whole number").min(0),
   category: objectId.optional(), // model has no `required: true`
 });
-
+const productImageParams = idParams("id", "imageId");
 const updateProductSchema = nonEmpty(createProductSchema.partial());
 
 const productParams = idParams("id");

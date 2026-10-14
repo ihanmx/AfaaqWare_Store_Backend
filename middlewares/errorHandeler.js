@@ -1,4 +1,5 @@
 const ApiError = require("../utils/ApiError");
+const multer = require("multer");
 
 const notFound = (req, res, next) => {
   next(ApiError.notFound(`Route ${req.method} ${req.originalUrl} not found`));
@@ -23,6 +24,14 @@ const normalize = (err) => {
   }
   if (err.type === "entity.parse.failed") {
     return ApiError.badRequest("Malformed JSON body");
+  }
+  if (err instanceof multer.MulterError) {
+    const messages = {
+      LIMIT_FILE_SIZE: "Each image must be 5 MB or smaller",
+      LIMIT_FILE_COUNT: "Too many files",
+      LIMIT_UNEXPECTED_FILE: "Unexpected file field, or too many files",
+    };
+    return ApiError.badRequest(messages[err.code] || err.message);
   }
 
   const wrapped = new ApiError(

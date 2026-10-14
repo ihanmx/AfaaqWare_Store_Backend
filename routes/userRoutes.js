@@ -53,4 +53,8 @@ router.delete(
   deleteUser,
 );
 
+router.get("/me", getMe);
+router.patch("/me/avatar", uploadAvatar, updateMyAvatar);
+router.delete("/me/avatar", removeMyAvatar);
+
 module.exports = router;

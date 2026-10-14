@@ -44,4 +44,19 @@ router.delete(
   deleteProduct,
 );
 
+router.post(
+  "/:id/images",
+  protect,
+  restrictTo("admin"),
+  validate({ params: productParams }), // bad id -> 400 before buffering files
+  uploadProductImages,
+  addProductImages,
+);
+router.delete(
+  "/:id/images/:imageId",
+  protect,
+  restrictTo("admin"),
+  validate({ params: productImageParams }),
+  removeProductImage,
+);
 module.exports = router;

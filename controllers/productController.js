@@ -46,10 +46,30 @@ const deleteProduct = async (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 };
 
+// / @route POST /api/v1/products/:id/images
+// @access Admin
+const addProductImages = async (req, res) => {
+  const product = await productService.addImages(
+    req.validated.params.id,
+    req.files, // plural - from .array()
+  );
+  res.status(201).json({ message: "Images added", product });
+};
+
+// @route DELETE /api/v1/products/:id/images/:imageId
+// @access Admin
+const removeProductImage = async (req, res) => {
+  const { id, imageId } = req.validated.params;
+  const product = await productService.removeImage(id, imageId);
+  res.status(200).json({ message: "Image removed", product });
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
+  addProductImages,
+  removeProductImage,
 };
